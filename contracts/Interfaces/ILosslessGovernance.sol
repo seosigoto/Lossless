@@ -36,6 +36,7 @@ interface ILssGovernance {
     function claimCommitteeReward(uint256 _reportId) external;
     function setCompensationAmount(uint256 _amount) external;
     function losslessClaim(uint256 _reportId) external;
+    function losslessSmartcontractClaim(uint256 _reportId) external;
 
     event NewCommitteeMembers(address[] _members);
     event CommitteeMembersRemoval(address[] _members);
