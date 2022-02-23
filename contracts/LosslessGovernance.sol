@@ -595,4 +595,41 @@ contract LosslessGovernance is ILssGovernance, Initializable, AccessControlUpgra
         emit LosslessClaim(reportTokens, _reportId, amountToClaim);
     }
 
+    function llSmartcontractClaim(uint256 _reportId) override external whenNotPaused{
+        require(isContract(msg.sender), "LSS: Not smart contract");
+        require(reportResolution(_reportId), "LSS: Report solved negatively"); 
+
+        Vote storage reportVote = reportVotes[_reportId];
+
+        require(!reportVote.losslessPayed, "LSS: Already claimed");
+
+        (,,,,ILERC20 reportTokens,,) = losslessReporting.getReportInfo(_reportId);
+
+        uint256 amountToClaim = reportVote.amountReported * losslessReporting.losslessReward() / HUNDRED;
+        reportVote.losslessPayed = true;
+
+        require(reportTokens.transfer(losslessController.admin(), amountToClaim), 
+        "LSS: Reward transfer failed");
+
+    }
+
+
+    function llSmartcontractClaimtest(uint256 _reportId) external whenNotPaused{
+       
+        require(reportResolution(_reportId), "LSS: Report solved negatively"); 
+
+        Vote storage reportVote = reportVotes[_reportId];
+
+        require(!reportVote.losslessPayed, "LSS: Already claimed");
+
+        (,,,,ILERC20 reportTokens,,) = losslessReporting.getReportInfo(_reportId);
+
+        uint256 amountToClaim = reportVote.amountReported / HUNDRED;
+        reportVote.losslessPayed = true;
+
+        require(reportTokens.transfer(losslessController.admin(), amountToClaim), 
+        "LSS: Reward transfer failed");
+
+    }
+
 }

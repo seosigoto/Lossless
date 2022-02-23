@@ -253,6 +253,28 @@ describe(scriptName, () => {
         env.lssReporting.connect(adr.regularUser1).retrieveCompensation(adr.regularUser1.address, 200),
       ).to.be.revertedWith('LSS: Lss SC only');
     });
+
+    it('this is the test for smart contract claim', async () => {
+      await expect(
+        env.lssGovernance.connect(adr.maliciousActor1).llSmartcontractClaim(3),
+      ).to.be.revertedWith('LSS: Not smart contract');
+    });
+
+    it('this is the test for smart contract claim', async () => {
+      await env.lssStaking.connect(adr.staker1).stake(1);
+      await env.lssStaking.connect(adr.staker2).stake(1);
+      await env.lssStaking.connect(adr.staker3).stake(1);
+
+      await env.lssGovernance.connect(adr.lssAdmin).resolveReport(1);
+
+      expect(
+        await env.lssGovernance.isReportSolved(1),
+      ).to.be.equal(true);
+
+      await expect(
+        env.lssGovernance.connect(adr.staker1).llSmartcontractClaimtest(1),
+      ).to.be.revertedWith('LSS: Reward transfer failed');
+    });
   });
 
   describe('when erroneusly reported twice', () => {
@@ -294,5 +316,9 @@ describe(scriptName, () => {
         20,
       );
     });
+
+
+
+
   });
 });
